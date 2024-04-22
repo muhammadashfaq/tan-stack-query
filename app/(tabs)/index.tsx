@@ -1,36 +1,20 @@
-import {useEffect, useState} from "react"
 import {ActivityIndicator, FlatList, StyleSheet, Text} from "react-native"
 import {View} from "@/components/Themed"
 import {getTopRatedMovies} from "@/api/movies"
+import {useQuery} from "@tanstack/react-query"
+import MovieListItem from "@/components/MovieListItem"
 
 export default function TabOneScreen() {
- const [movies, setMovies] = useState([])
- const [loading, setLoading] = useState(false)
- const [error, setError] = useState("")
- useEffect(() => {
-  const getMovies = async () => {
-   try {
-    setLoading(true)
-    const movies = await getTopRatedMovies()
-    setMovies(movies)
-    setLoading(false)
-   } catch (err) {
-    setLoading(false)
-    setError(err)
-   }
-  }
-  getMovies()
- }, [])
+ const {data, isLoading, error} = useQuery({
+  queryKey: ["movies"],
+  queryFn: getTopRatedMovies,
+ })
 
- const renderMovie = ({item, index}) => {
-  return (
-   <View>
-    <Text>{item.title}</Text>
-   </View>
-  )
+ const renderMovie = ({item, index}: any) => {
+  return <MovieListItem movie={item} />
  }
 
- if (loading) {
+ if (isLoading) {
   return <ActivityIndicator />
  }
 
@@ -40,7 +24,13 @@ export default function TabOneScreen() {
 
  return (
   <View style={styles.container}>
-   <FlatList data={movies} renderItem={renderMovie} />
+   <FlatList
+    data={data}
+    numColumns={2}
+    contentContainerStyle={{gap: 5}}
+    columnWrapperStyle={{gap: 5}}
+    renderItem={renderMovie}
+   />
   </View>
  )
 }
@@ -48,7 +38,5 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
  container: {
   flex: 1,
-  alignItems: "center",
-  justifyContent: "center",
  },
 })
