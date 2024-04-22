@@ -4,7 +4,7 @@ import {useFonts} from "expo-font"
 import {Stack} from "expo-router"
 import * as SplashScreen from "expo-splash-screen"
 import {useEffect} from "react"
-
+import {useReactQueryDevTools} from "@dev-plugins/react-query"
 import {useColorScheme} from "@/components/useColorScheme"
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
 
@@ -48,6 +48,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+ useReactQueryDevTools(queryClient)
  const colorScheme = useColorScheme()
 
  return (
